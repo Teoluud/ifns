@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import ROOT
 
@@ -31,4 +32,4 @@ class RootRenderer:
             obj.Draw("APE")
         safe_output_file = str(output_file)
         canvas.SaveAs(safe_output_file)
-        print(f"Plot saved in: {safe_output_file}")
+        logging.info(f"Plot saved in: {safe_output_file}")

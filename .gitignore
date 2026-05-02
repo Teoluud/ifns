@@ -6,3 +6,4 @@ dati
 output
 *.cpp
 *~
+*.log

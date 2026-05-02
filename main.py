@@ -1,3 +1,4 @@
+import logging
 from pathlib import Path
 import ROOT
 
@@ -7,17 +8,31 @@ BASE_DIR = Path(__file__).resolve().parent
 CONFIG_FILE = BASE_DIR / 'config.yml'
 OUTPUT_DIR = BASE_DIR / 'output'
 
+logging.basicConfig(
+    level=logging.INFO, # Shows messages INFO, WARNING, ERROR and CRITICAL
+    format='%(asctime)s | %(levelname)-8s | %(message)s',
+    datefmt='%H:%M:%S',
+    handlers=[
+        logging.StreamHandler(), # Prints on the console
+        # Uncomment below if you want to save in a file too.
+        logging.FileHandler(BASE_DIR / 'analisi_run.log', mode='w') 
+    ]
+)
+
 
 def main():
     # Suppress routine ROOT messages (Info, Warnings). 
     # It will now only print Errors or Fatal crashes.
     ROOT.gErrorIgnoreLevel = ROOT.kError
-    OUTPUT_DIR.mkdir(exist_ok=True)     # Creates the folder if it doesn't exist
+    ROOT.gROOT.SetBatch(True)
+    # Create the output folder if it doesn't exist
+    OUTPUT_DIR.mkdir(exist_ok=True)
     # Load the configuration
     config = ConfigReader(CONFIG_FILE)
     # --------------------------------------------------
     # STRONTIUM SPECTRUM
     # --------------------------------------------------
+    logging.info("=" * 100)
     sr_spectrum_cfg = config.get('sr_spectrum')
     sr_spectrum_pipeline = PeakAnalysisPipeline(
         name='Sr_Spectrum',
@@ -30,9 +45,11 @@ def main():
     )
     tmax_chn, err_tmax_chn = sr_spectrum_pipeline.run()
     sr_spectrum_pipeline.save_plot(OUTPUT_DIR / 'sr_spectrum.png')
+
     # --------------------------------------------------
     # CENTERED SOURCE CALIBRATION
     # --------------------------------------------------
+    logging.info("=" * 100)
     kurie_center_cfg = config.get('kurie_center')
     center_sr_pipeline = KurieCalibrationPipeline(
         name='Centered_Sr_Calibration',
@@ -47,6 +64,7 @@ def main():
     # --------------------------------------------------
     # MUON SPECTRUM ANALYSIS
     # --------------------------------------------------
+    logging.info("=" * 100)
     muon_cfg = config.get('muons')
     muon_pipeline = PeakAnalysisPipeline(
         name='muons',
@@ -63,6 +81,7 @@ def main():
     # --------------------------------------------------
     # EQUIVALENT SOURCE CALIBRATION
     # --------------------------------------------------
+    logging.info("=" * 100)
     kurie_eq_cfg = config.get('kurie_equivalent')
     eq_sr_pipeline = KurieCalibrationPipeline(
         name='Equivalent_Sr_Calibration',
@@ -78,12 +97,18 @@ def main():
     # MUON BETHE-BLOCH CALCULATION
     # --------------------------------------------------
     if mpv_chn is not None and k_eq is not None and err_mpv_chn is not None:
-        print("\n==================================================")
-        print(" MUON BETHE-BLOCH")
-        print("==================================================")
-        muon_energy, err_muon_energy = eq_sr_pipeline.calibrator.compute_energy(mpv_chn, err_mpv_chn)
-        print(f'Vertical Muon Energy Loss (MPV): ({muon_energy:.2e} +/- {err_muon_energy:.0e}) keV')
-        print("==================================================")
+        # Compute the energy (calibrator returns keV)
+        muon_energy_kev, err_muon_energy_kev = eq_sr_pipeline.calibrator.compute_energy(mpv_chn, err_mpv_chn)
+        # Convert in MeV
+        muon_energy_mev = muon_energy_kev / 1000.0
+        err_muon_energy_mev = err_muon_energy_kev / 1000.0
+        # Print output
+        logging.info("=" * 50)
+        logging.info(" MUON BETHE-BLOCH")
+        logging.info("=" * 50)
+        logging.info(f"Vertical Muon Energy Loss (MPV): ({muon_energy_mev:.2f} ± {err_muon_energy_mev:.2f}) MeV")
+        logging.info("Theoretical Value (Polystyrene): ~2.06 MeV")
+        logging.info("=" * 50)
 
 
 if __name__ == "__main__":

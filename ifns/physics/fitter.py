@@ -1,3 +1,4 @@
+import logging
 import ROOT
 
 
@@ -39,13 +40,13 @@ class RootFitter:
         'R' forces the fit to use the range (x_min, x_max) defined earlier.
         'S' tells ROOT to return the FitResultPtr containing the covariance matrix.
         """
-        print(f'Executing fit "{self.name}" on the histogram "{hist.GetName()}"...')
+        logging.info(f'Executing fit "{self.name}" on the histogram "{hist.GetName()}"...')
         self.fit_result = hist.Fit(self.func, options)
         return self.fit_result
     
     def apply_to_graph(self, graph: ROOT.TGraphErrors, options: str = 'RSQ') -> ROOT.TFitResultPtr:
         """ Executes the fit on a TGraphErrors. (Should work on TGraph too)
         """
-        print(f'Executing fit "{self.name}" on the graph "{graph.GetName()}"...')
+        logging.info(f'Executing fit "{self.name}" on the graph "{graph.GetName()}"...')
         self.fit_result = graph.Fit(self.func, options)
         return self.fit_result

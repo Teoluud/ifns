@@ -1,5 +1,5 @@
+import logging
 from pathlib import Path
-
 import numpy as np
 import ROOT
 
@@ -34,7 +34,7 @@ class KurieCalibrationPipeline:
     def run(self) -> tuple[float | None, float | None]:
         """ Executes the whole calibration pipeline.
         """
-        print(f'\n--- Running Calibration Pipeline: {self.name} ---')
+        logging.info(f'--- Running Calibration Pipeline: {self.name} ---')
         # Load and Rebin
         df_raw = ImportData(self.filepath).load_data()
         df_rebinned = HistogramRebinner(self.rebin_factor).apply(df_raw, 'Channel', 'Counts')
@@ -57,11 +57,11 @@ class KurieCalibrationPipeline:
         # Extract Calibration Factor
         if self.fit_result is not None and self.fit_result.IsValid():
             chi2, ndf = self.fit_result.Chi2(), self.fit_result.Ndf()
-            print(f'Fit converged! Chi2/NDF: {chi2/ndf:.2f}')
+            logging.info(f'Fit converged! Chi2/NDF: {chi2/ndf:.2f}')
             self.k, self.err_k = self.calibrator.compute_calibration_factor(self.fit_result)
-            print(f'Calibration Factor (k): ({self.k:.2e} ± {self.err_k:.1e}) keV/CHN')
+            logging.info(f'Calibration Factor (k): ({self.k:.2e} ± {self.err_k:.1e}) keV/CHN')
         else:
-            print('Warning: Fit failed to converge!')
+            logging.warning('Warning: Fit failed to converge!')
         return self.k, self.err_k
     
     def save_plot(self, output_filename: str | Path) -> None:

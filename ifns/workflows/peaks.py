@@ -1,6 +1,5 @@
+import logging
 from pathlib import Path
-
-import numpy as np
 import ROOT
 
 from ..data import ImportData, HistogramRebinner
@@ -32,7 +31,7 @@ class PeakAnalysisPipeline:
     def run(self) -> tuple[float | None, float | None]:
         """ Executes the whole peak analysis pipeline.
         """
-        print(f'\n--- Running Peak Analysis: {self.name} ---')
+        logging.info(f'--- Running Peak Analysis: {self.name} ---')
         # Load and Rebin
         df_raw = ImportData(self.filepath).load_data()
         df_rebinned = HistogramRebinner(self.rebin_factor).apply(df_raw, 'Channel', 'Counts')
@@ -47,13 +46,13 @@ class PeakAnalysisPipeline:
         # Extract Peak
         if self.fit_result is not None and self.fit_result.IsValid():
             chi2, ndf = self.fit_result.Chi2(), self.fit_result.Ndf()
-            print(f'Fit converged! Chi2/NDF: {chi2/ndf:.2f}')
+            logging.info(f'Fit converged! Chi2/NDF: {chi2/ndf:.2f}')
             # Parameter 1 is the MPV of the Landau distribution
             self.peak_chn = self.fit_result.Parameter(self.peak_param_idx)
             self.err_peak_chn = self.fit_result.ParError(self.peak_param_idx)
-            print(f'Peak Value: ({self.peak_chn:.2e} ± {self.err_peak_chn:.1e}) CHN')
+            logging.info(f'Peak Value: ({self.peak_chn:.2e} ± {self.err_peak_chn:.1e}) CHN')
         else:
-            print(f'WARNING: Fit for {self.name} failed to converge!')
+            logging.warning(f'Fit for {self.name} failed to converge!')
         return self.peak_chn, self.err_peak_chn
     
     def save_plot(self, output_filename: str | Path):
