@@ -32,7 +32,7 @@ class PeakAnalysisPipeline:
     def run(self) -> tuple[float | None, float | None]:
         """ Executes the whole peak analysis pipeline.
         """
-        print(f'\n--- Running Peak Analysis: {self.name}')
+        print(f'\n--- Running Peak Analysis: {self.name} ---')
         # Load and Rebin
         df_raw = ImportData(self.filepath).load_data()
         df_rebinned = HistogramRebinner(self.rebin_factor).apply(df_raw, 'Channel', 'Counts')

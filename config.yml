@@ -1,8 +1,8 @@
 sr_spectrum:
   filepath: 'dati/sorgenti/stronzio/sr_histo_str.csv'
   rebin_factor: 4
-  fit_xmin: 0
-  fit_xmax: 70000
+  fit_xmin: 3000
+  fit_xmax: 8000
 
 kurie_center:
   filepath: 'dati/sorgenti/stronzio/sr_histo_str.csv'
