@@ -5,9 +5,9 @@ from ifns import ConfigReader, KurieCalibrationPipeline, PeakAnalysisPipeline
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_FILE = BASE_DIR / 'config.yml'
 OUTPUT_DIR = BASE_DIR / 'output'
-OUTPUT_DIR.mkdir(exist_ok=True)     # Creates the folder if it doesn't exist
 
 def main():
+    OUTPUT_DIR.mkdir(exist_ok=True)     # Creates the folder if it doesn't exist
     # Load the configuration
     config = ConfigReader(CONFIG_FILE)
     # --------------------------------------------------

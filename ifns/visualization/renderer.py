@@ -1,3 +1,4 @@
+from pathlib import Path
 import ROOT
 
 
@@ -28,7 +29,6 @@ class RootRenderer:
                 obj.GetXaxis().SetLimits(x_min, x_max)
             # A = Axes, P = Points, E = Error bars
             obj.Draw("APE")
-        
-        # input("Press Enter to continue...")
-        canvas.SaveAs(output_file)
-        print(f"Plot saved in: {output_file}")
+        safe_output_file = str(output_file)
+        canvas.SaveAs(safe_output_file)
+        print(f"Plot saved in: {safe_output_file}")

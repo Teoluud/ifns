@@ -33,7 +33,7 @@ class RootFitter:
         """
         self.func.SetLineColor(color)
 
-    def apply_to_histogram(self, hist: ROOT.TH1F, options: str = 'RS') -> ROOT.TFitResultPtr:
+    def apply_to_histogram(self, hist: ROOT.TH1F, options: str = 'RSQ') -> ROOT.TFitResultPtr:
         """
         Executes the fit on the histogram.
         'R' forces the fit to use the range (x_min, x_max) defined earlier.
@@ -43,7 +43,7 @@ class RootFitter:
         self.fit_result = hist.Fit(self.func, options)
         return self.fit_result
     
-    def apply_to_graph(self, graph: ROOT.TGraphErrors, options: str = 'RS') -> ROOT.TFitResultPtr:
+    def apply_to_graph(self, graph: ROOT.TGraphErrors, options: str = 'RSQ') -> ROOT.TFitResultPtr:
         """ Executes the fit on a TGraphErrors. (Should work on TGraph too)
         """
         print(f'Executing fit "{self.name}" on the graph "{graph.GetName()}"...')
