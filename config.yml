@@ -1,0 +1,23 @@
+sr_spectrum:
+  filepath: 'dati/sorgenti/stronzio/sr_histo_str.csv'
+  rebin_factor: 4
+  fit_xmin: 0
+  fit_xmax: 70000
+
+kurie_center:
+  filepath: 'dati/sorgenti/stronzio/sr_histo_str.csv'
+  rebin_factor: 10
+  fit_xmin: 42000
+  fit_xmax: 52000
+  
+muons:
+  filepath: 'dati/sorgenti/muoni.csv'
+  rebin_factor: 4
+  fit_xmin: 20000
+  fit_xmax: 40000
+
+kurie_equivalent:
+  filepath: 'dati/sorgenti/stronzio/sr_histo_trasl.csv'
+  rebin_factor: 10
+  fit_xmin: 25000
+  fit_xmax: 30000
