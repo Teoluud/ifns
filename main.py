@@ -2,7 +2,7 @@ import logging
 from pathlib import Path
 import ROOT
 
-from ifns import ConfigReader, KurieCalibrationPipeline, PeakAnalysisPipeline
+from ifns import ConfigReader, KurieCalibrationPipeline, PeakAnalysisPipeline, EnergyCalibrator
 
 BASE_DIR = Path(__file__).resolve().parent
 CONFIG_FILE = BASE_DIR / 'config.yml'
@@ -35,7 +35,7 @@ def main():
     logging.info("=" * 100)
     sr_spectrum_cfg = config.get('sr_spectrum')
     sr_spectrum_pipeline = PeakAnalysisPipeline(
-        name='Sr_Spectrum',
+        name='Stronzio',
         filepath=BASE_DIR / sr_spectrum_cfg['filepath'],
         fit_function='gaus',
         peak_param_idx=1,
@@ -52,11 +52,13 @@ def main():
     logging.info("=" * 100)
     kurie_center_cfg = config.get('kurie_center')
     center_sr_pipeline = KurieCalibrationPipeline(
-        name='Centered_Sr_Calibration',
+        name='Stronzio Centrato',
         filepath=BASE_DIR / kurie_center_cfg['filepath'],
         rebin_factor=kurie_center_cfg['rebin_factor'],
         fit_xmin=kurie_center_cfg['fit_xmin'],
-        fit_xmax=kurie_center_cfg['fit_xmax']
+        fit_xmax=kurie_center_cfg['fit_xmax'],
+        p0_guess=kurie_center_cfg['p0_guess'],
+        p1_guess=kurie_center_cfg['p1_guess']
     )
     k_center, err_k_center = center_sr_pipeline.run()
     center_sr_pipeline.save_plot(OUTPUT_DIR / 'kurie_plot_center.png')
@@ -67,7 +69,7 @@ def main():
     logging.info("=" * 100)
     muon_cfg = config.get('muons')
     muon_pipeline = PeakAnalysisPipeline(
-        name='muons',
+        name='Muoni',
         filepath=BASE_DIR / muon_cfg['filepath'],
         fit_function='landau',
         peak_param_idx=1,
@@ -84,11 +86,13 @@ def main():
     logging.info("=" * 100)
     kurie_eq_cfg = config.get('kurie_equivalent')
     eq_sr_pipeline = KurieCalibrationPipeline(
-        name='Equivalent_Sr_Calibration',
+        name='Stronzio Decentrato',
         filepath=kurie_eq_cfg['filepath'],
         rebin_factor=kurie_eq_cfg['rebin_factor'],
         fit_xmin=kurie_eq_cfg['fit_xmin'],
-        fit_xmax=kurie_eq_cfg['fit_xmax']
+        fit_xmax=kurie_eq_cfg['fit_xmax'],
+        p0_guess=kurie_eq_cfg['p0_guess'],
+        p1_guess=kurie_eq_cfg['p1_guess']
     )
     k_eq, err_k_eq = eq_sr_pipeline.run()
     eq_sr_pipeline.save_plot(OUTPUT_DIR / 'kurie_plot_equivalent.png')

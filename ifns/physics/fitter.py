@@ -22,6 +22,9 @@ class RootFitter:
         """
         for i, p in enumerate(params):
             self.func.SetParameter(i, p)
+
+    def set_parameter_limits(self, id: int, min: float, max: float) -> None:
+        self.func.SetParLimits(id, min, max)
         
     def set_par_names(self, *names: str) -> None:
         """ Assigns a name to fit parameters.

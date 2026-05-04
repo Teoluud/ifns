@@ -37,7 +37,7 @@ class PeakAnalysisPipeline:
         df_rebinned = HistogramRebinner(self.rebin_factor).apply(df_raw, 'Channel', 'Counts')
         # Build ROOT Histogram
         self.hist = PandasToRootAdapter(
-            df_rebinned, name=f'h_{self.name}', title=f'Spectrum - {self.name}',
+            df_rebinned, name=f'h_{self.name}', title=f'Spettro - {self.name}',
             x_axis='CHN', y_axis='Conteggi'
             ).build_histogram('Channel', 'Counts', x_min=0, x_max=70000, err_col='Error')
         # Perform Landau Fit

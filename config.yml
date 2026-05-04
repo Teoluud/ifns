@@ -6,9 +6,11 @@ sr_spectrum:
 
 kurie_center:
   filepath: 'dati/sorgenti/stronzio/sr_histo_str.csv'
-  rebin_factor: 10
-  fit_xmin: 42000
-  fit_xmax: 52000
+  rebin_factor: 6
+  fit_xmin: 59000
+  fit_xmax: 65000
+  p0_guess: 2e-6
+  p1_guess: -1e-7
   
 muons:
   filepath: 'dati/sorgenti/muoni.csv'
@@ -21,3 +23,5 @@ kurie_equivalent:
   rebin_factor: 10
   fit_xmin: 25000
   fit_xmax: 30000
+  p0_guess: 0.02
+  p1_guess: -1e-7

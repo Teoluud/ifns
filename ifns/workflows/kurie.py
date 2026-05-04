@@ -14,6 +14,7 @@ class KurieCalibrationPipeline:
 
     def __init__(self, name: str, filepath: str | Path, rebin_factor: int,
                  fit_xmin: float, fit_xmax: float,
+                 p0_guess: float = 0.02, p1_guess: float = -1e-7,
                  endpoint_kev: float = 2.28e3, err_endpoint_kev: float = 0.04e3
                  ) -> None:
         """ Constructor.
@@ -23,6 +24,8 @@ class KurieCalibrationPipeline:
         self.rebin_factor = rebin_factor
         self.fit_xmin = fit_xmin
         self.fit_xmax = fit_xmax
+        self.p0_guess: float = float(p0_guess)
+        self.p1_guess: float = float(p1_guess)
         # Initialize the physics calculator
         self.calibrator = EnergyCalibrator(endpoint_kev, err_endpoint_kev)
         # State variables to hold results
@@ -52,7 +55,7 @@ class KurieCalibrationPipeline:
         ).build_graph('Channel', 'kurie_y', x_min=self.fit_xmin, x_max=self.fit_xmax, err_x_col='err_chn', err_y_col='err_kurie_y')
         # Perform Fit
         fitter = RootFitter(f'fit_{self.name}', 'pol1', x_min=self.fit_xmin, x_max=self.fit_xmax)
-        fitter.set_initial_parameters(0.02, -1e-7)
+        fitter.set_initial_parameters(self.p0_guess, self.p1_guess)
         self.fit_result = fitter.apply_to_graph(self.graph)
         # Extract Calibration Factor
         if self.fit_result is not None and self.fit_result.IsValid():
